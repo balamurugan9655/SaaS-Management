@@ -6,6 +6,9 @@ import Cards from '../components/Cards';
 import AddTenantModal from '../components/AddTenantModal';
 import ManageProducts from '../components/ManageProducts';
 import EditTenantModal from '../components/EditTenantModal';
+import { useUser } from "../components/UserContext";
+import { useEffect } from 'react';
+import axios from "../utils/axios";
 
 const Dashboard = () => {
   const [showModal, setShowModal] = useState(false);
@@ -13,24 +16,131 @@ const Dashboard = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [tenantToEdit, setTenantToEdit] = useState(null);
 
+  // 
+  const { userData } = useUser();
+  console.log(userData);
+  // 
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  const [tenants, setTenants] = useState([
-    { id: 1, name: "Acme Corporation", domain: "acme.example.com", status: "Active", plan: "Enterprise", products: 3 },
-    { id: 2, name: "Globex Industries", domain: "globex.example.com", status: "Active", plan: "Professional", products: 2 },
-    { id: 3, name: "Initech LLC", domain: "initech.example.com", status: "Inactive", plan: "Starter", products: 1 },
-  ]);
+  
 
-  const handleAddTenant = (newTenant) => {
-    const newId = tenants.length + 1;
-    const data = { ...newTenant, id: newId };
-    setTenants(prev => [...prev, data]);
+  const features = [
+    {
+      id:'pipeline',
+      name: 'Deal Pipeline',
+      enabled: false
+    },
+    {
+      id:'task',
+      name: 'Task Management',
+      enabled: false
+    },
+    {
+      id:'email',
+      name: 'Email Integration',
+      enabled: false
+    },
+    {
+      id:'reporting',
+      name: 'Advanced Reporting',
+      enabled: false
+    },
+    {
+      id:'analytics',
+      name: 'Analytics',
+      enabled: false
+    },
+    {
+      id:'dashboards',
+      name: 'Custom Dashboards',
+      enabled: false
+    },
+    {
+      id:'scheduled',
+      name: 'Scheduled Reports',
+      enabled: false
+    },
+    {
+      id:'export',
+      name: 'Data Export',
+      enabled: false
+    },
+    {
+      id:'api',
+      name: 'API Access',
+      enabled: false
+    },
+    {
+      id:'predictive',
+      name: 'Predictive Analytics',
+      enabled: false
+    },
+    {
+      id:'marketing',
+      name: 'Marketing',
+      enabled: false
+    },
+    {
+      id:'support',
+      name: 'Support',
+      enabled: false
+    }
+  ];
+
+  const [tenants, setTenants] = useState([]);
+
+  const fetchData = async () => {
+      try {
+        const res = await axios.get('/tenants')
+        setTenants(res.data)
+      } catch (err) {
+        alert(err.response?.data?.msg || "Something went wrong");
+      }
+    }
+
+  useEffect(()=>{
+    // const data = tenants.map(t => ({...t, features: features.map(f => ({...f})) }));
+    // setTenants(data);
+
+    fetchData();
+
+  },[]);
+
+  // console.log(tenants);
+
+  // const handleAddTenant = (newTenant) => {
+  //   const newId = tenants.length + 1;
+  //   const data = { ...newTenant, id: newId, features: features };
+  //   setTenants(prev => [...prev, data]);
+  // };
+
+  const handleAddTenant = async (newTenant) => {
+    const data = {...newTenant, features: features}
+    try {
+      console.log(data)
+      const res = await axios.post('/tenants', data );
+      alert(res.data.msg)
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.msg || "Something went wrong");
+    }
   };
+  
+  // const sample = tenants.map(i => console.log(i.features))
+  // console.log(sample);
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = async (id) => {
     if (window.confirm("Are you sure to delete this tenant?")) {
-      setTenants(prev => prev.filter(t => t.id !== id));
+      // setTenants(prev => prev.filter(t => t._id !== id));
+      try {
+        const res = await axios.delete(`/tenants/${id}`)
+        alert(res.data.msg);
+        fetchData();
+      } catch (err) {
+        alert(err.response?.data?.msg || "Something went wrong");
+      }
     }
   };
 
@@ -39,16 +149,24 @@ const Dashboard = () => {
     setEditModalOpen(true);
   };
 
-  const handleUpdateTenant = (updatedTenant) => {
-    setTenants(prev =>
-      prev.map(t => (t.id === updatedTenant.id ? updatedTenant : t))
-    );
+  const handleUpdateTenant = async (updatedTenant) => {
+    // setTenants(prev =>
+    //   prev.map(t => (t._id === updatedTenant._id ? updatedTenant : t))
+    // );
+    const id = updatedTenant._id;
+    try {
+      const res = await axios.put(`/tenants/${id}`,updatedTenant);
+      alert(res.data.msg);
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.msg || "Something went wrong");
+    }
   };
 
   // Filter Logic
   const filteredTenants = tenants.filter((tenant) => {
     const matchesSearch =
-      tenant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tenant.tenantsName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       tenant.domain.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === '' || tenant.status === statusFilter;
@@ -57,7 +175,20 @@ const Dashboard = () => {
   });
 
   // 
-  
+  const [userFeatureAccess, setUserFeatureAccess] = useState([])
+    const featuresAccess = (id) => {
+      setShowFeatureModel(true);
+      console.log(id);
+      const data = tenants.find(t => t._id === id);
+      setUserFeatureAccess(data.features)
+    }
+
+    // console.log(userFeatureAccess);
+
+    // const handelUpdateFeatureAccess = (featuresState) => {
+    //   setShowFeatureModel(false)
+    // }
+
   // 
 
   return (
@@ -74,7 +205,7 @@ const Dashboard = () => {
       <TotalList />
 
       <Cards
-        onAddClick={() => setShowFeatureModel(true)}
+        onAddClick={featuresAccess}
         tenants={filteredTenants}
         handleDeleteClick={handleDeleteClick}
         onEditClick={handleEditClick}
@@ -89,6 +220,7 @@ const Dashboard = () => {
       <ManageProducts
         isOpen={showFeatureModel}
         onClose={() => setShowFeatureModel(false)}
+        togglesData={userFeatureAccess}
       />
 
       <EditTenantModal

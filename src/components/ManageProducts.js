@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaTimes } from 'react-icons/fa';
 
-const ManageProducts = ({ isOpen, onClose }) => {
-
+const ManageProducts = ({ isOpen, onClose, togglesData }) => {
   const productFeatures = [
     {
       category: 'Core Features',
@@ -38,86 +37,74 @@ const ManageProducts = ({ isOpen, onClose }) => {
     }
   ];
 
-  const [toggles, setToggles] = useState(() => {
-    const init = {};
-    productFeatures.forEach(group =>
-      group.items.forEach(item => (init[item.id] = false))
-    );
-    return init;
-  });
+  const [featureState, setFeatureState] = useState([]);
+
+  // Initialize featureState from props when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setFeatureState([...togglesData]);
+    }
+  }, [isOpen, togglesData]);
 
   const handleToggle = (id) => {
-      setToggles(prev => ({ ...prev, [id]: !prev[id] }));
-  }
-
-  const handleSave = () => {
-      const result = [];
-      productFeatures.forEach(section =>
-      section.items.forEach(item =>
-          result.push({ name: item.name, enabled: toggles[item.id] })
-      )
-      );
-      console.log('🟢 Feature Status:', result);
-      onClose();
+    const updated = featureState.map(f =>
+      f.id === id ? { ...f, enabled: !f.enabled } : f
+    );
+    setFeatureState(updated);
   };
 
-  if (!isOpen) return null
+  const handleSave = () => {
+    console.log('🟢 Final Feature States:', featureState);
+    onClose(featureState); // Pass updated features to parent if needed
+  };
 
-    return(
-        <div className="modal-overlay">
-          <div className="manage-modal">
-            <div className="modal-header">
-              <h3>Manage Product Features</h3>
-              <FaTimes className="close-icon" onClick={() => onClose()} />
-            </div>
+  if (!isOpen) return null;
 
-            <div className="modal-body">
-              {productFeatures.map(sec => (
-                <div className='section' key={sec.category}>
-                  {sec.items.map(i => (
-                    i.name === sec.category ? (
-                    <div className='feature-row1' key={i.id}>
-                      <label className="switch">
-                        <input
-                          type="checkbox"
-                          checked={toggles[i.id]}
-                          onChange={() => handleToggle(i.id)}
-                        />
-                        <span className="slider"></span>
-                      </label>
-                      <div className="feature-text">
-                        <strong>{i.name}</strong>
-                        <p>{i.desc}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="feature-row" key={i.id}>
-                      <div className="feature-text">
-                        <strong>{i.name}</strong>
-                        <p>{i.desc}</p>
-                      </div>
-                      <label className="switch">
-                        <input
-                          type="checkbox"
-                          checked={toggles[i.id]}
-                          onChange={() => handleToggle(i.id)}
-                        />
-                        <span className="slider"></span>
-                      </label>
-                    </div>
-                  )
-                  ))}
-                </div>
-              ))}
-            </div>
+  //  console.log() la data print aaguthu but connect pannala so connect panni seperat ta view aagura maari vaikkanum
 
-            <div className="btn-row">
-              <button className="cancel-btn" onClick={() => onClose()}>Cancel</button>
-              <button className="save-btn" onClick={handleSave}>Save</button>
-            </div>
-          </div>
+  return (
+    <div className="modal-overlay">
+      <div className="manage-modal">
+        <div className="modal-header">
+          <h3>Manage Product Features</h3>
+          <FaTimes className="close-icon" onClick={() => onClose()} />
         </div>
-    )
-}
+
+        <div className="modal-body">
+          {productFeatures.map(section => (
+            <div className='section' key={section.category}>
+              {section.items.map(i => {
+                const current = featureState.find(f => f.id === i.id);
+                const checked = current ? current.enabled : false;
+
+                return (
+                  <div className="feature-row" key={i.id}>
+                    <div className="feature-text">
+                      <strong>{i.name}</strong>
+                      <p>{i.desc}</p>
+                    </div>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => handleToggle(i.id)}
+                      />
+                      <span className="slider"></span>
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        <div className="btn-row">
+          <button className="cancel-btn" onClick={() => onClose()}>Cancel</button>
+          <button className="save-btn" onClick={handleSave}>Save</button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default ManageProducts;

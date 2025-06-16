@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from "../utils/axios";
+import { useUser } from "../components/UserContext";
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { isLogin } = useUser();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // TODO: API integration here
-    console.log('Login with:', "email: " + email, "pass: " + password);
-    navigate('/dashboard');
+    try {
+      const res = await axios.post('/user/login', { email, password } )
+      localStorage.setItem('token', res.data.token);
+      isLogin(res.data.user);
+      navigate('/dashboard');
+    } catch(err) {
+      alert(err.response?.data?.msg || "Something went wrong");
+    }
+    // console.log('Login with:', "email: " + email, "pass: " + password);
   };
 
   return (
@@ -30,7 +40,7 @@ const Login = () => {
           </div>
           <div className="login-options">
             <label>
-              <input type="checkbox" /> Remember me
+              <input type="checkbox" required /> Remember me
             </label>
             <Link href="/" className="forgot-link">Forgot password?</Link>
           </div>

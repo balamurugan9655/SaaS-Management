@@ -4,10 +4,10 @@ import { FaTimes } from 'react-icons/fa';
 const AddTenantModal = ({ isOpen, onClose, onSave }) => {
 
     const [formData, setFormData] = useState({
-       name: '',
+       tenantsName: '',
        domain: '',
-       email: '',
-       plan: 'Free',
+       adminEmail: '',
+       subscriptionPlan: 'Free',
        status: 'Active',
        products: '',
        createdDate: '', // Empty by default
@@ -61,8 +61,8 @@ const AddTenantModal = ({ isOpen, onClose, onSave }) => {
                   <label>Tenant Name</label>
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="tenantsName"
+                    value={formData.tenantsName}
                     onChange={handleChange}
                     required
                   />
@@ -84,15 +84,15 @@ const AddTenantModal = ({ isOpen, onClose, onSave }) => {
                   <label>Admin Email</label>
                   <input
                     type="email"
-                    name="email"
-                    value={formData.email}
+                    name="adminEmail"
+                    value={formData.adminEmail}
                     onChange={handleChange}
                     required
                   />
                 </div>
                 <div className="input-group">
                   <label>Subscription Plan</label>
-                  <select name="plan" value={formData.plan} onChange={handleChange}>
+                  <select name="subscriptionPlan" value={formData.subscriptionPlan} onChange={handleChange}>
                     <option value="Free">Free</option>
                     <option value="Enterprise">Enterprise</option>
                     <option value="Professional">Professional</option>

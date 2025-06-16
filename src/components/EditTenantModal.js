@@ -3,11 +3,10 @@ import { FaTimes } from 'react-icons/fa';
 
 const EditTenantModal = ({ isOpen, onClose, editData, onUpdate }) => {
   const [formData, setFormData] = useState({
-    id: '',
-    name: '',
+    tenantsName: '',
     domain: '',
     status: '',
-    plan: '',
+    subscriptionPlan: '',
     products: ''
   });
 
@@ -41,7 +40,7 @@ const EditTenantModal = ({ isOpen, onClose, editData, onUpdate }) => {
           <div className="form-row">
             <div className="input-group">
               <label>Tenant Name</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+              <input type="text" name="tenantsName" value={formData.tenantsName} onChange={handleChange} required />
             </div>
             <div className="input-group">
               <label>Domain</label>
@@ -59,7 +58,7 @@ const EditTenantModal = ({ isOpen, onClose, editData, onUpdate }) => {
             </div>
             <div className="input-group">
               <label>Plan</label>
-              <select name="plan" value={formData.plan} onChange={handleChange}>
+              <select name="subscriptionPlan" value={formData.subscriptionPlan} onChange={handleChange}>
                 <option value="Free">Free</option>
                 <option value="Starter">Starter</option>
                 <option value="Professional">Professional</option>

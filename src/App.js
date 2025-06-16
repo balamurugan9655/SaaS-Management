@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Example from './components/Example';
+import { UserProvider } from "./components/UserContext";
 
 function App() {
   return (
-    <>
+    <UserProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
@@ -14,8 +15,7 @@ function App() {
           <Route path="/example" element={<Example />} />
         </Routes>
       </Router>
-      
-    </>
+    </UserProvider>
   );
 }
 
