@@ -101,20 +101,10 @@ const Dashboard = () => {
     }
 
   useEffect(()=>{
-    // const data = tenants.map(t => ({...t, features: features.map(f => ({...f})) }));
-    // setTenants(data);
 
     fetchData();
 
   },[]);
-
-  // console.log(tenants);
-
-  // const handleAddTenant = (newTenant) => {
-  //   const newId = tenants.length + 1;
-  //   const data = { ...newTenant, id: newId, features: features };
-  //   setTenants(prev => [...prev, data]);
-  // };
 
   const handleAddTenant = async (newTenant) => {
     const data = {...newTenant, features: features}
@@ -127,32 +117,37 @@ const Dashboard = () => {
       alert(err.response?.data?.msg || "Something went wrong");
     }
   };
-  
-  // const sample = tenants.map(i => console.log(i.features))
-  // console.log(sample);
+
 
   const handleDeleteClick = async (id) => {
-    if (window.confirm("Are you sure to delete this tenant?")) {
-      // setTenants(prev => prev.filter(t => t._id !== id));
-      try {
-        const res = await axios.delete(`/tenants/${id}`)
-        alert(res.data.msg);
-        fetchData();
-      } catch (err) {
-        alert(err.response?.data?.msg || "Something went wrong");
+    if(userData.accountType === 'admin') {
+       if (window.confirm("Are you sure to delete this tenant?")) {
+        
+        try {
+          const res = await axios.delete(`/tenants/${id}`)
+          alert(res.data.msg);
+          fetchData();
+        } catch (err) {
+          alert(err.response?.data?.msg || "Something went wrong");
+        }
       }
+    }
+    else {
+      alert('Admin Access Only')
     }
   };
 
   const handleEditClick = (tenant) => {
-    setTenantToEdit(tenant);
-    setEditModalOpen(true);
+    if(userData.accountType === 'admin') {
+      setTenantToEdit(tenant);
+      setEditModalOpen(true);
+    }
+    else {
+      alert('Admin Access Only')
+    }
   };
 
   const handleUpdateTenant = async (updatedTenant) => {
-    // setTenants(prev =>
-    //   prev.map(t => (t._id === updatedTenant._id ? updatedTenant : t))
-    // );
     const id = updatedTenant._id;
     try {
       const res = await axios.put(`/tenants/${id}`,updatedTenant);
@@ -176,24 +171,40 @@ const Dashboard = () => {
 
   // 
   const [userFeatureAccess, setUserFeatureAccess] = useState([])
-    const featuresAccess = (id) => {
-      setShowFeatureModel(true);
-      console.log(id);
-      const data = tenants.find(t => t._id === id);
-      setUserFeatureAccess(data.features)
+    const featuresAccess = async (id) => {
+      if(userData.accountType === 'admin') {
+        try {
+          const res = await axios.get(`/tenants/${id}/features`);
+          console.log(res.data);
+          setUserFeatureAccess(res.data);
+          setShowFeatureModel(true);
+        } catch (err) {
+          alert(err.response?.data?.msg || "Something went wrong");
+        }
+      }
+      else {
+        alert('Admin Access Only')
+      }
     }
 
-    // console.log(userFeatureAccess);
-
-    // const handelUpdateFeatureAccess = (featuresState) => {
-    //   setShowFeatureModel(false)
-    // }
+    const refreshData = () => {
+      setShowFeatureModel(false);
+      fetchData();
+    }
 
   // 
+  const addTenantClick = ()=> {
+    if(userData.accountType === 'admin') {
+      setShowModal(true)
+    }
+    else {
+      alert('Admin Access Only')
+    }
+  }
 
   return (
     <div className="dashboard-container1">
-      <Navbar onAddClick={() => setShowModal(true)} />
+      <Navbar onAddClick={addTenantClick} />
       
       <FilterBox
         searchTerm={searchTerm}
@@ -202,7 +213,9 @@ const Dashboard = () => {
         setStatusFilter={setStatusFilter}
       />
 
-      <TotalList />
+      <TotalList 
+        tenantData={tenants}
+      />
 
       <Cards
         onAddClick={featuresAccess}
@@ -219,7 +232,7 @@ const Dashboard = () => {
 
       <ManageProducts
         isOpen={showFeatureModel}
-        onClose={() => setShowFeatureModel(false)}
+        onClose={refreshData}
         togglesData={userFeatureAccess}
       />
 

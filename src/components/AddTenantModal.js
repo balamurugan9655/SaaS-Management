@@ -22,14 +22,6 @@ const AddTenantModal = ({ isOpen, onClose, onSave }) => {
        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // const formatDate = (isoDate) => {
-    //    if (!isoDate) return '';
-    //    const [yyyy, mm, dd] = isoDate.split('-');
-    //    return `${dd}-${mm}-${yyyy}`;
-    // };
-
-    // console.log(Math.floor(Math.random()*5)+1);
-
     const handleSubmit = (e) => {
        e.preventDefault();
        const dataToLog = {
@@ -115,7 +107,7 @@ const AddTenantModal = ({ isOpen, onClose, onSave }) => {
                        type="text"
                        name="createdDate"
                        value={formattedToday}
-                       readOnly // or use disabled
+                       readOnly 
                    />
                 </div>
               </div>

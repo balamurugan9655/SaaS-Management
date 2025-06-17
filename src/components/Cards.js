@@ -24,7 +24,7 @@ const Cards = ({ onAddClick, tenants, handleDeleteClick, onEditClick }) => {
           <div>
             <div className="tenant-tags">
               <span className={`tag ${tenant.status.toLowerCase()}`}>{tenant.status}</span>
-              <span className="tag plan">{tenant.subscriptionPlan}</span>
+              <span className={`tag plan ${tenant.subscriptionPlan.toLowerCase()}`}>{tenant.subscriptionPlan}</span>
             </div>
             <p className="products">{tenant.products} Products</p>
           </div>

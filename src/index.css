@@ -389,9 +389,22 @@
   color: #666;
 }
 
-.tag.plan {
+.tag.free {
   background: #ede9fe;
   color: #7c3aed;
+}
+
+.tag.enterprise {
+  background: #E9D5FF;
+  color: #6B21A8;
+}
+.tag.professional {
+  background: #BFDBFE;
+  color: #1D4ED8;
+}
+.tag.starter {
+  background: #BBF7D0;
+  color: #15803D;
 }
 
 .products {

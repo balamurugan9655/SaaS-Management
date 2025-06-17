@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaTimes } from 'react-icons/fa';
+import axios from '../utils/axios';
 
 const ManageProducts = ({ isOpen, onClose, togglesData }) => {
   const productFeatures = [
@@ -42,7 +43,9 @@ const ManageProducts = ({ isOpen, onClose, togglesData }) => {
   // Initialize featureState from props when modal opens
   useEffect(() => {
     if (isOpen) {
-      setFeatureState([...togglesData]);
+      const fData = togglesData.features;
+      console.log(togglesData);
+      setFeatureState([...fData]);
     }
   }, [isOpen, togglesData]);
 
@@ -53,14 +56,20 @@ const ManageProducts = ({ isOpen, onClose, togglesData }) => {
     setFeatureState(updated);
   };
 
-  const handleSave = () => {
-    console.log('🟢 Final Feature States:', featureState);
-    onClose(featureState); // Pass updated features to parent if needed
+  const handleSave = async () => {
+    const id = togglesData._id;
+    console.log(id);
+    try {
+      const res = await axios.put(`/tenants/${id}/features`, { features: featureState });
+      alert(res.data.msg);
+      onClose();
+    } catch (err) {
+      alert(err.response?.data?.msg || "Something went wrong");
+    }
+   
   };
 
   if (!isOpen) return null;
-
-  //  console.log() la data print aaguthu but connect pannala so connect panni seperat ta view aagura maari vaikkanum
 
   return (
     <div className="modal-overlay">
