@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 const UserContext = createContext();
 
@@ -8,6 +8,7 @@ export const UserProvider = ({ children }) => {
     const [userData, setUserData] = useState( '' );
 
     const isLogin = (data) => {
+        // JSON.parse(localStorage.getItem('userData'));
         setUserData(data);
     } 
 

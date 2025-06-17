@@ -6,7 +6,7 @@ import Cards from '../components/Cards';
 import AddTenantModal from '../components/AddTenantModal';
 import ManageProducts from '../components/ManageProducts';
 import EditTenantModal from '../components/EditTenantModal';
-import { useUser } from "../components/UserContext";
+// import { useUser } from "../components/UserContext";
 import { useEffect } from 'react';
 import axios from "../utils/axios";
 import Loading from './Loading';
@@ -17,15 +17,15 @@ const Dashboard = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [tenantToEdit, setTenantToEdit] = useState(null);
   const [loading, setLoading] = useState(true);
-  // 
-  const { userData } = useUser();
-  console.log(userData);
-  // 
+  
+  // const { userData } = useUser();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [userInfo, setUserInfo] = useState('');
 
-  
+  // console.log(userData);
+  // console.log(JSON.parse(localStorage.getItem('userData')))
 
   const features = [
     {
@@ -105,8 +105,11 @@ const Dashboard = () => {
   useEffect(()=>{
 
     fetchData();
+    setUserInfo(JSON.parse(localStorage.getItem('userData')));
 
   },[]);
+
+  console.log(userInfo);
 
   const handleAddTenant = async (newTenant) => {
     const data = {...newTenant, features: features}
@@ -122,7 +125,7 @@ const Dashboard = () => {
 
 
   const handleDeleteClick = async (id) => {
-    if(userData.accountType === 'admin') {
+    if(userInfo.accountType === 'admin') {
        if (window.confirm("Are you sure to delete this tenant?")) {
         
         try {
@@ -140,7 +143,7 @@ const Dashboard = () => {
   };
 
   const handleEditClick = (tenant) => {
-    if(userData.accountType === 'admin') {
+    if(userInfo.accountType === 'admin') {
       setTenantToEdit(tenant);
       setEditModalOpen(true);
     }
@@ -174,7 +177,7 @@ const Dashboard = () => {
   // 
   const [userFeatureAccess, setUserFeatureAccess] = useState([])
     const featuresAccess = async (id) => {
-      if(userData.accountType === 'admin') {
+      if(userInfo.accountType === 'admin') {
         try {
           const res = await axios.get(`/tenants/${id}/features`);
           console.log(res.data);
@@ -196,7 +199,7 @@ const Dashboard = () => {
 
   // 
   const addTenantClick = ()=> {
-    if(userData.accountType === 'admin') {
+    if(userInfo.accountType === 'admin') {
       setShowModal(true)
     }
     else {

@@ -23,10 +23,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // TODO: API integration here
+    localStorage.clear();
     try {
       const res = await axios.post('/user/login', { email, password } )
       localStorage.setItem('token', res.data.token);
-      isLogin(res.data.user);
+      localStorage.setItem('userData', JSON.stringify(res.data.user));
+      
+      isLogin(JSON.parse(localStorage.getItem('userData')));
       navigate('/dashboard');
     } catch(err) {
       alert(err.response?.data?.msg || "Something went wrong");
