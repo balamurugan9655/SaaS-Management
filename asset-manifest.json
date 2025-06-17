@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/SaaS-Management/static/css/main.cf82e498.css",
+    "main.js": "/SaaS-Management/static/js/main.e0eae70d.js",
+    "static/media/Loading-gif.mp4": "/SaaS-Management/static/media/Loading-gif.548658011f0084005560.mp4",
+    "static/media/Brand-icon.png": "/SaaS-Management/static/media/Brand-icon.f2441e57e71931ed7f87.png",
+    "index.html": "/SaaS-Management/index.html",
+    "main.cf82e498.css.map": "/SaaS-Management/static/css/main.cf82e498.css.map",
+    "main.e0eae70d.js.map": "/SaaS-Management/static/js/main.e0eae70d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cf82e498.css",
+    "static/js/main.e0eae70d.js"
+  ]
+}
