@@ -9,13 +9,14 @@ import EditTenantModal from '../components/EditTenantModal';
 import { useUser } from "../components/UserContext";
 import { useEffect } from 'react';
 import axios from "../utils/axios";
+import Loading from './Loading';
 
 const Dashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [showFeatureModel, setShowFeatureModel] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [tenantToEdit, setTenantToEdit] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   // 
   const { userData } = useUser();
   console.log(userData);
@@ -93,8 +94,9 @@ const Dashboard = () => {
 
   const fetchData = async () => {
       try {
-        const res = await axios.get('/tenants')
-        setTenants(res.data)
+        const res = await axios.get('/tenants');
+        setTenants(res.data);
+        setLoading(false)
       } catch (err) {
         alert(err.response?.data?.msg || "Something went wrong");
       }
@@ -201,6 +203,8 @@ const Dashboard = () => {
       alert('Admin Access Only')
     }
   }
+
+  if (loading) return <Loading />;
 
   return (
     <div className="dashboard-container1">

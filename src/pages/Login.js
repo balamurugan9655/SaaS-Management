@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import axios from "../utils/axios";
 import { useUser } from "../components/UserContext";
+import Loading from './Loading';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { isLogin } = useUser();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+        setLoading(false);
+      }, 3000); // loading time
+  
+      return () => clearTimeout(timer);
+  },[])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +33,8 @@ const Login = () => {
     }
     // console.log('Login with:', "email: " + email, "pass: " + password);
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="login-wrapper">
