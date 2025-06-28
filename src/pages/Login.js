@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from "../utils/axios";
 import { useUser } from "../components/UserContext";
 import Loading from './Loading';
@@ -8,12 +7,12 @@ import Loading from './Loading';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // starts as false
   const navigate = useNavigate();
   const { isLogin } = useUser();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+      const timer = setTimeout(() => {
         setLoading(false);
       }, 3000); // loading time
   
@@ -22,19 +21,19 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: API integration here
     localStorage.clear();
+    setLoading(true); // start loading spinner
     try {
-      const res = await axios.post('/user/login', { email, password } )
+      const res = await axios.post('/user/login', { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userData', JSON.stringify(res.data.user));
-      
       isLogin(JSON.parse(localStorage.getItem('userData')));
       navigate('/dashboard');
-    } catch(err) {
+    } catch (err) {
       alert(err.response?.data?.msg || "Something went wrong");
+    } finally {
+      setLoading(false); // stop spinner even if error
     }
-    // console.log('Login with:', "email: " + email, "pass: " + password);
   };
 
   if (loading) return <Loading />;
@@ -57,7 +56,7 @@ const Login = () => {
             <label>
               <input type="checkbox" required /> Remember me
             </label>
-            <Link href="/" className="forgot-link">Forgot password?</Link>
+            <Link to="/" className="forgot-link">Forgot password?</Link>
           </div>
           <button type="submit" className='submit-button'>Sign in</button>
           <p className="demo-info">Demo: Use any email/password</p>
